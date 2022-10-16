@@ -1,5 +1,9 @@
 package numpuzzle;
 
+import utils.Pair;
+
+import java.util.List;
+
 public interface Board {
     /**
      * Get the value of a certain position on the board
@@ -32,11 +36,17 @@ public interface Board {
 
     /**
      * Moves the board towards a certain direction.
-     * @param move Move toward the direction specified. E.g. if the value is {@code Move.UP} then the element
-     *             UNDER the empty cell will move upward
+     * @param direction Move toward the direction specified. E.g. if the value is {@code Move.UP} then the element
+     *                  UNDER the empty cell will move upward
      * @return The board itself
      */
-    public Board moveDirection(Move move);
+    public Board move(Move direction);
+
+    /**
+     * Get all valid moves starting from the current state
+     * @return List of valid moves
+     */
+    public List<Move> getValidMoves();
 
     /**
      * Populate the board with the given state
@@ -54,6 +64,12 @@ public interface Board {
     public String getState();
 
     // Getters & setters
-    public int getWidth();
     public int getHeight();
+    public int getWidth();
+
+    /**
+     * Get the position of the empty cell
+     * @return a {@code Pair} containing the position of the empty cell
+     */
+    public Pair getEmptyCell();
 }
