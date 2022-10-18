@@ -9,6 +9,10 @@ public class Pair {
     }
 
     public Pair(int x, int y) {
+        set(x, y);
+    }
+
+    public void set(int x, int y) {
         this.x = x;
         this.y = y;
     }

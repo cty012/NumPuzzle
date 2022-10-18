@@ -1,11 +1,7 @@
 package numpuzzle;
 
-
-import org.jetbrains.annotations.NotNull;
 import utils.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class BoardImpl implements Board {
@@ -30,11 +26,13 @@ public class BoardImpl implements Board {
     }
 
     @Override
-    public int get(int r, int c, int defaultValue) {
-        if (!inBound(r, c)) {
-            return defaultValue;
-        } else {
-            return board[r][c];
+    public void set(int r, int c, int value) {
+        assert inBound(r, c) : "(r, c) = (" + r + ", " + c + ") is out of bounds";
+        board[r][c] = value;
+        // Update empty cell
+        if (value == 0) {
+            emptyCell.x = r;
+            emptyCell.y = c;
         }
     }
 
@@ -119,98 +117,24 @@ public class BoardImpl implements Board {
     }
 
     @Override
-    public Board move(@NotNull Move direction) {
-        Pair target = emptyCell.clone();
-        switch (direction) {
-            case UP:
-                target.x++;
-                break;
-            case DOWN:
-                target.x--;
-                break;
-            case LEFT:
-                target.y++;
-                break;
-            case RIGHT:
-                target.y--;
-                break;
-            default:
-                return this;
-        }
-
-        // Valid moves will result in valid row and column of target
-        if (inBound(target.x, target.y)) {
-            // Swap target and empty cell
-            swap(target.x, target.y, emptyCell.x, emptyCell.y);
-            emptyCell.x = target.x;
-            emptyCell.y = target.y;
-        }
-
-        return this;
-    }
-
-    @Override
-    public List<Move> getValidMoves() {
-        List<Move> moves = new ArrayList<>();
-        if (emptyCell.x < height - 1) {
-            moves.add(Move.UP);
-        }
-        if (emptyCell.x > 0) {
-            moves.add(Move.DOWN);
-        }
-        if (emptyCell.y < width - 1) {
-            moves.add(Move.LEFT);
-        }
-        if (emptyCell.y > 0) {
-            moves.add(Move.RIGHT);
-        }
-        return moves;
-    }
-
-    @Override
-    public Board loadState(String state) {
-        assert state.length() == height * width : "The state has wrong length";
-        for (int i = 0; i < height * width; i++) {
-            int r = i / width, c = i % width;
-            board[r][c] = state.charAt(i) - '0';
-        }
-        return this;
-    }
-
-    @Override
-    public String getState() {
-        StringBuilder state = new StringBuilder("");
-        for (int i = 0; i < height * width; i++) {
-            int r = i / width, c = i % width;
-            state.append((char)(board[r][c] + '0'));  // Add '0' for better visualization
-        }
-        return state.toString();
-    }
-
-    // Helpers
-    /**
-     * Checks if the position is valid
-     * @param r The row
-     * @param c The column
-     * @return Whether the position is valid
-     */
-    private boolean inBound(int r, int c) {
-        return r >= 0 && r < height && c >= 0 && c < width;
-    }
-
-    /**
-     * Swaps the values of two positions on the board
-     * @param r1 Row of first position
-     * @param c1 Column of first position
-     * @param r2 Row of second position
-     * @param c2 Column of second position
-     */
-    private void swap(int r1, int c1, int r2, int c2) {
+    public void swap(int r1, int c1, int r2, int c2) {
         int temp = board[r1][c1];
         board[r1][c1] = board[r2][c2];
         board[r2][c2] = temp;
+        // Check if empty cell is swapped
+        if (board[r1][c1] == 0) {
+            emptyCell.set(r1, c1);
+        } else if (board[r2][c2] == 0) {
+            emptyCell.set(r2, c2);
+        }
     }
 
+    @Override
+    public boolean inBound(int r, int c) {
+        return r >= 0 && r < height && c >= 0 && c < width;
+    }
+
+    // Helpers
     /**
      * Finds the parity of the board's permutation (the empty cell = w*h)
      * @return -1 if odd permutation and 1 if even permutation
