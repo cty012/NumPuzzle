@@ -1,2 +1,2 @@
-# NumPuzzle
- A program that solves number puzzles
+# Sliding Puzzle
+ A program that solves sliding puzzles
