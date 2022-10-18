@@ -14,7 +14,7 @@ public class Main {
         game.restart();
         Helper.printState(h, w, game.getState());
 
-        Solution solution = new AStarSolution();
-        System.out.println(solution.solve(game));
+        Solution solution = new AStarSolution(4 * ((h - 1) + (w - 1)));
+        System.out.println(solution.solve(game, true));
     }
 }

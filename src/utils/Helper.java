@@ -14,7 +14,7 @@ public class Helper {
         for (int r = 0; r < h; r++) {
             for (int c = 0; c < w; c++) {
                 int val = state.charAt(r * w + c + steps) - '0';
-                System.out.print(" ");
+                System.out.print("\t");
                 if (val == 0) {
                     System.out.print("*");
                 } else {

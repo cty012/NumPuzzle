@@ -11,5 +11,5 @@ public interface Solution {
      * @param game The game to be solved
      * @return A String of moves (represented in char) in order to solve the game
      */
-    String solve(Game game);
+    String solve(Game game, boolean verbose);
 }

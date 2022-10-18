@@ -49,6 +49,12 @@ public interface Game {
     String getPastMoves();
 
     /**
+     * Get the number of steps already taken
+     * @return The number of steps
+     */
+    int getSteps();
+
+    /**
      * Checks if the current state is the final state
      * @return A boolean value representing whether the current state is the final state
      */
@@ -57,7 +63,7 @@ public interface Game {
     /**
      * Evaluate how "good" the CURRENT state is. Usually, a state with fewer steps to reach and closer
      * to the target state will be a better state
-     * @return A positive integer score of the CURRENT state. A lower score represents a better state
+     * @return An integer score of the CURRENT state. A lower score represents a better state
      */
     int evaluate();
 
@@ -65,7 +71,7 @@ public interface Game {
      * Evaluate how "good" the GIVEN state is. Usually, a state with fewer steps to reach and closer
      * to the target state will be a better state
      * @param state The state to be evaluated
-     * @return A positive integer score of the GIVEN state. A lower score represents a better state
+     * @return An integer score of the GIVEN state. A lower score represents a better state
      */
     int evaluate(String state);
 }

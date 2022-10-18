@@ -134,6 +134,11 @@ public class NumPuzzleGame implements Game {
     }
 
     @Override
+    public int getSteps() {
+        return pastMoves.length();
+    }
+
+    @Override
     public boolean isFinalState() {
         int h = board.getHeight();
         int w = board.getWidth();
@@ -164,7 +169,8 @@ public class NumPuzzleGame implements Game {
          * Therefore, adding the past number of moves with the minimum required moves gives the total
          * minimum moves. This can be used as a metric for minimizing the total number of steps.
          */
-        return state.length() - board.getHeight() * board.getWidth() - getDisplacement(state);
+        // UPDATE: The total number of steps is now removed from this method
+        return getDisplacement(state);
     }
 
     // Helper
@@ -172,17 +178,32 @@ public class NumPuzzleGame implements Game {
         int h = board.getHeight();
         int w = board.getWidth();
         state = state.substring(state.length() - h * w);
-        int totalDisplacement = 0;
+        int totalDisplacement = h * w + 2 * (h + w);  // Base score
 
         for (int r = 0; r < h; r++) {
             for (int c = 0; c < w; c++) {
                 int value = state.charAt(r * w + c) - '0';
                 if (value == 0) {
+                    totalDisplacement -= 3;
                     continue;
                 }
+
                 int targetR = (value - 1) / w;
                 int targetC = (value - 1) % w;
-                totalDisplacement += Math.abs(targetR - r) + Math.abs(targetC - c);
+                int displacement = Math.abs(targetR - r) + Math.abs(targetC - c);
+                totalDisplacement += displacement;
+
+                // subtract 1 if the number is in the correct place
+                if (displacement == 0) {
+                    totalDisplacement -= 1;
+                    if ((r == 0 || r == h - 1) && (c == 0 || c == w - 1)) {
+                        // subtract another 2 if the number is on the corner
+                        totalDisplacement -= 2;
+                    } else if (r == 0 || r == h - 1 || c == 0 || c == w - 1) {
+                        // subtract another 1 if the number is on the edge
+                        totalDisplacement -= 1;
+                    }
+                }
             }
         }
 

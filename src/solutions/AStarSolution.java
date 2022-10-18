@@ -4,32 +4,37 @@ import game.Game;
 import game.Move;
 import numpuzzle.NumPuzzleGame;
 
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class AStarSolution implements Solution {
+    public int threshold;
+
+    public AStarSolution(int threshold) {
+        this.threshold = threshold;
+    }
+
+    public AStarSolution() {
+        this.threshold = Integer.MAX_VALUE;
+    }
+
     @Override
-    public String solve(Game game) {
+    public String solve(Game game, boolean verbose) {
         /*
          * This solution uses a priority queue to iterate over all possible states that can be reached
          * by the starting state
          */
-        PriorityQueue<String> pq = new PriorityQueue<>((o1, o2) ->
-                Integer.compare(game.evaluate(o1), game.evaluate(o2)));
+        PriorityQueue<String> pq = new PriorityQueue<>(Comparator.comparingInt(o -> game.evaluate(o) + o.length()));
         pq.add(game.getState());
 
-        int minDisplacement = ((NumPuzzleGame)game).getDisplacement(game.getState());
+        int minScore = game.evaluate();
+        int minScoreSteps = game.getSteps();
 
         int count = 0;
         while (!pq.isEmpty()) {
             // Get the game state with the least evaluation score
             String nextState = pq.remove();
             game.loadState(nextState);
-
-            int disp = ((NumPuzzleGame)game).getDisplacement(nextState);
-            if (disp < minDisplacement) {
-                minDisplacement = disp;
-                System.out.printf("%d/0: %d iterations\n", disp, count);
-            }
 
             // Return if the final state has been reached
             if (game.isFinalState()) {
@@ -40,9 +45,23 @@ public class AStarSolution implements Solution {
             for (Move move : game.getValidMoves()) {
                 game.move(move);
                 String state = game.getState();
+
+                // Update the current best score
+                int score = game.evaluate();
+                int steps = game.getSteps();
+                if (score < minScore) {
+                    minScore = score;
+                    minScoreSteps = steps;
+                    if (verbose) {
+                        System.out.printf("%d/0: %d iterations\n", score, count);
+                    }
+                }
+
                 // Trim all states that are far from minimum
-                disp = ((NumPuzzleGame)game).getDisplacement(state);
-                if (disp - minDisplacement <= 4) pq.add(state);
+                if (score + steps - minScore - minScoreSteps <= threshold) {
+                    pq.add(state);
+                }
+
                 game.undo();
             }
             count++;
