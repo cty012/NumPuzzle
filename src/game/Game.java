@@ -32,15 +32,40 @@ public interface Game {
     boolean move(@NotNull Move m);
 
     /**
+     * Undo the last move. Note that for some games this will always fail
+     * @return Whether the undo is successful
+     */
+    boolean undo();
+
+    /**
      * Get a list of all moves that will end with a successful result starting from the current state
      * @return The list of valid moves
      */
     List<Move> getValidMoves();
 
     /**
-     * Evaluate how "good" the current state is. Usually, a state with fewer steps to reach and closer
+     * Get a string of chars representing the order of the moves executed
+     */
+    String getPastMoves();
+
+    /**
+     * Checks if the current state is the final state
+     * @return A boolean value representing whether the current state is the final state
+     */
+    boolean isFinalState();
+
+    /**
+     * Evaluate how "good" the CURRENT state is. Usually, a state with fewer steps to reach and closer
      * to the target state will be a better state
-     * @return A positive integer score of the current state. A lower score represents a better state
+     * @return A positive integer score of the CURRENT state. A lower score represents a better state
      */
     int evaluate();
+
+    /**
+     * Evaluate how "good" the GIVEN state is. Usually, a state with fewer steps to reach and closer
+     * to the target state will be a better state
+     * @param state The state to be evaluated
+     * @return A positive integer score of the GIVEN state. A lower score represents a better state
+     */
+    int evaluate(String state);
 }

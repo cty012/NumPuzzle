@@ -10,30 +10,31 @@ import java.util.List;
 
 public class NumPuzzleGame implements Game {
     private final Board board;
-    private int steps;
+    private final StringBuilder pastMoves;
 
     public NumPuzzleGame(int height, int width) {
         board = new BoardImpl(height, width);
-        steps = 0;
+        pastMoves = new StringBuilder();
     }
 
     @Override
     public void restart() {
         board.reset().shuffle();
-        steps = 0;
+        pastMoves.setLength(0);
     }
 
     @Override
     public void loadState(String state) {
         int h = board.getHeight();
         int w = board.getWidth();
-        assert state.length() == h * w + 2 : "The state has wrong length";
+        assert state.length() >= h * w : "The state's length is too short";
 
-        steps = state.charAt(0) * 65536 + state.charAt(1);
+        pastMoves.setLength(0);
+        pastMoves.append(state.substring(0, state.length() - h * w));
 
         for (int i = 0; i < h * w; i++) {
             int r = i / w, c = i % w;
-            board.set(r, c, state.charAt(i + 2) - '0');
+            board.set(r, c, state.charAt(i + pastMoves.length()) - '0');
         }
     }
 
@@ -43,8 +44,7 @@ public class NumPuzzleGame implements Game {
         int w = board.getWidth();
 
         StringBuilder state = new StringBuilder("");
-        state.append((char)(steps / 65536));
-        state.append((char)(steps % 65536));
+        state.append(pastMoves);
 
         for (int i = 0; i < h * w; i++) {
             int r = i / w, c = i % w;
@@ -78,7 +78,7 @@ public class NumPuzzleGame implements Game {
         if (board.inBound(target.x, target.y)) {
             // Swap target and empty cell
             board.swap(target.x, target.y, emptyCell.x, emptyCell.y);
-            steps++;
+            pastMoves.append(direction.toChar());
             return true;
         }
 
@@ -86,9 +86,25 @@ public class NumPuzzleGame implements Game {
     }
 
     @Override
+    public boolean undo(){
+        int n = pastMoves.length();
+        if (n == 0) {
+            return false;
+        }
+
+        NumPuzzleMove lastMove = NumPuzzleMove.fromChar(pastMoves.charAt(n - 1));
+        move(lastMove.reverse());
+        pastMoves.setLength(n - 1);
+
+        return true;
+    }
+
+    @Override
     public List<Move> getValidMoves() {
         List<Move> moves = new ArrayList<>();
         Pair emptyCell = board.getEmptyCell();
+
+        // Find valid moves according to the position of the empty cell
         if (emptyCell.x < board.getHeight() - 1) {
             moves.add(NumPuzzleMove.UP);
         }
@@ -101,12 +117,84 @@ public class NumPuzzleGame implements Game {
         if (emptyCell.y > 0) {
             moves.add(NumPuzzleMove.RIGHT);
         }
+
+        // Remove the last executed move for optimization
+        NumPuzzleMove lastMove = NumPuzzleMove.STAY;
+        if (pastMoves.length() > 0) {
+            lastMove = NumPuzzleMove.fromChar(pastMoves.charAt(pastMoves.length() - 1));
+        }
+        moves.remove(lastMove.reverse());
+
         return moves;
     }
 
     @Override
+    public String getPastMoves() {
+        return pastMoves.toString();
+    }
+
+    @Override
+    public boolean isFinalState() {
+        int h = board.getHeight();
+        int w = board.getWidth();
+        for (int r = 0; r < h; r++) {
+            for (int c = 0; c < w; c++) {
+                if (board.get(r, c) != (r * w + c + 1) % (h * w)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
     public int evaluate() {
-        // TODO: change this to a more effective heuristic function
-        return steps;
+        return evaluate(getState());
+    }
+
+    @Override
+    public int evaluate(String state) {
+        /*
+         * For all numbers i, define the target position of i as the position of i in the final state.
+         * Define the displacement of i as the sum of row difference and column difference of its
+         * current position and target position. Note that each move can only change the displacement
+         * of one of the numbers from 1 to h * w - 1. Therefore, the minimum required move is the sum
+         * of all displacements of numbers 1 to h * w - 1.
+         *
+         * Therefore, adding the past number of moves with the minimum required moves gives the total
+         * minimum moves. This can be used as a metric for minimizing the total number of steps.
+         */
+        return state.length() - board.getHeight() * board.getWidth() - getDisplacement(state);
+    }
+
+    // Helper
+    public int getDisplacement(String state) {
+        int h = board.getHeight();
+        int w = board.getWidth();
+        state = state.substring(state.length() - h * w);
+        int totalDisplacement = 0;
+
+        for (int r = 0; r < h; r++) {
+            for (int c = 0; c < w; c++) {
+                int value = state.charAt(r * w + c) - '0';
+                if (value == 0) {
+                    continue;
+                }
+                int targetR = (value - 1) / w;
+                int targetC = (value - 1) % w;
+                totalDisplacement += Math.abs(targetR - r) + Math.abs(targetC - c);
+            }
+        }
+
+        return totalDisplacement;
+    }
+
+    // Getters & setters
+    public int getHeight() {
+        return board.getHeight();
+    }
+
+    public int getWidth() {
+        return board.getWidth();
     }
 }
