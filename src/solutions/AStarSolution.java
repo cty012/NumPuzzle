@@ -2,7 +2,6 @@ package solutions;
 
 import game.Game;
 import game.Move;
-import numpuzzle.NumPuzzleGame;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -19,7 +18,7 @@ public class AStarSolution implements Solution {
     }
 
     @Override
-    public String solve(Game game, boolean verbose) {
+    public String solve(Game game, int verbose) {
         /*
          * This solution uses a priority queue to iterate over all possible states that can be reached
          * by the starting state
@@ -52,8 +51,12 @@ public class AStarSolution implements Solution {
                 if (score < minScore) {
                     minScore = score;
                     minScoreSteps = steps;
-                    if (verbose) {
+                    if (verbose >= 1) {
                         System.out.printf("%d/0: %d iterations\n", score, count);
+                    }
+                    if (verbose >= 2) {
+                        System.out.println(game.getState());
+                        System.out.println();
                     }
                 }
 

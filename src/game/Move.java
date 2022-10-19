@@ -1,8 +1,5 @@
 package game;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public interface Move {
     /**
      * Convert the move to a char to reduce space

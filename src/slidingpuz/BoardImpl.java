@@ -1,4 +1,4 @@
-package numpuzzle;
+package slidingpuz;
 
 import utils.Pair;
 

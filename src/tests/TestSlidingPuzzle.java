@@ -1,13 +1,13 @@
 package tests;
 
 import game.Game;
-import numpuzzle.NumPuzzleGame;
-import numpuzzle.NumPuzzleMove;
+import slidingpuz.SlidingPuzGame;
+import slidingpuz.SlidingPuzMove;
 import utils.Helper;
 
 import java.util.Random;
 
-public class TestNumPuzzle {
+public class TestSlidingPuzzle {
     public static void main(String[] args) {
         assert args.length >= 2 : "At least 2 arguments required";
         int h = Integer.parseInt(args[0]);
@@ -16,14 +16,14 @@ public class TestNumPuzzle {
         int numMoves = args.length >= 4 ? Integer.parseInt(args[3]) : 0;
 
         // USED FOR TESTING
-        Game game = new NumPuzzleGame(h, w);
+        Game game = new SlidingPuzGame(h, w);
         System.out.println(game.getState());
 
         // SHUFFLE
         Random random = new Random();
-        NumPuzzleMove[] allMoves = {
-                NumPuzzleMove.UP, NumPuzzleMove.DOWN,
-                NumPuzzleMove.LEFT, NumPuzzleMove.RIGHT };
+        SlidingPuzMove[] allMoves = {
+                SlidingPuzMove.UP, SlidingPuzMove.DOWN,
+                SlidingPuzMove.LEFT, SlidingPuzMove.RIGHT };
         String[] allMovesMsg = { "UP", "DOWN", "LEFT", "RIGHT" };
 
         for (int i = 0; i < shuffles; i++) {

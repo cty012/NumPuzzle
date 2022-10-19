@@ -1,4 +1,4 @@
-package numpuzzle;
+package slidingpuz;
 
 import game.Game;
 import game.Move;
@@ -8,11 +8,11 @@ import utils.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NumPuzzleGame implements Game {
+public class SlidingPuzGame implements Game {
     private final Board board;
     private final StringBuilder pastMoves;
 
-    public NumPuzzleGame(int height, int width) {
+    public SlidingPuzGame(int height, int width) {
         board = new BoardImpl(height, width);
         pastMoves = new StringBuilder();
     }
@@ -57,7 +57,7 @@ public class NumPuzzleGame implements Game {
     public boolean move(@NotNull Move direction) {
         Pair emptyCell = board.getEmptyCell();
         Pair target = emptyCell.clone();
-        switch ((NumPuzzleMove) direction) {
+        switch ((SlidingPuzMove) direction) {
             case UP:
                 target.x++;
                 break;
@@ -92,7 +92,7 @@ public class NumPuzzleGame implements Game {
             return false;
         }
 
-        NumPuzzleMove lastMove = NumPuzzleMove.fromChar(pastMoves.charAt(n - 1));
+        SlidingPuzMove lastMove = SlidingPuzMove.fromChar(pastMoves.charAt(n - 1));
         move(lastMove.reverse());
         pastMoves.setLength(n - 1);
 
@@ -106,22 +106,22 @@ public class NumPuzzleGame implements Game {
 
         // Find valid moves according to the position of the empty cell
         if (emptyCell.x < board.getHeight() - 1) {
-            moves.add(NumPuzzleMove.UP);
+            moves.add(SlidingPuzMove.UP);
         }
         if (emptyCell.x > 0) {
-            moves.add(NumPuzzleMove.DOWN);
+            moves.add(SlidingPuzMove.DOWN);
         }
         if (emptyCell.y < board.getWidth() - 1) {
-            moves.add(NumPuzzleMove.LEFT);
+            moves.add(SlidingPuzMove.LEFT);
         }
         if (emptyCell.y > 0) {
-            moves.add(NumPuzzleMove.RIGHT);
+            moves.add(SlidingPuzMove.RIGHT);
         }
 
         // Remove the last executed move for optimization
-        NumPuzzleMove lastMove = NumPuzzleMove.STAY;
+        SlidingPuzMove lastMove = SlidingPuzMove.STAY;
         if (pastMoves.length() > 0) {
-            lastMove = NumPuzzleMove.fromChar(pastMoves.charAt(pastMoves.length() - 1));
+            lastMove = SlidingPuzMove.fromChar(pastMoves.charAt(pastMoves.length() - 1));
         }
         moves.remove(lastMove.reverse());
 
@@ -178,13 +178,13 @@ public class NumPuzzleGame implements Game {
         int h = board.getHeight();
         int w = board.getWidth();
         state = state.substring(state.length() - h * w);
-        int totalDisplacement = h * w + 2 * (h + w);  // Base score
+        int totalDisplacement = h * w + 2 * (h + w) + 4 * 3;  // Base score
 
         for (int r = 0; r < h; r++) {
             for (int c = 0; c < w; c++) {
                 int value = state.charAt(r * w + c) - '0';
                 if (value == 0) {
-                    totalDisplacement -= 3;
+                    totalDisplacement -= 6;
                     continue;
                 }
 
@@ -198,7 +198,7 @@ public class NumPuzzleGame implements Game {
                     totalDisplacement -= 1;
                     if ((r == 0 || r == h - 1) && (c == 0 || c == w - 1)) {
                         // subtract another 2 if the number is on the corner
-                        totalDisplacement -= 2;
+                        totalDisplacement -= 5;
                     } else if (r == 0 || r == h - 1 || c == 0 || c == w - 1) {
                         // subtract another 1 if the number is on the edge
                         totalDisplacement -= 1;

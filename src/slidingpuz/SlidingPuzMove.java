@@ -1,8 +1,8 @@
-package numpuzzle;
+package slidingpuz;
 
 import game.Move;
 
-public enum NumPuzzleMove implements Move {
+public enum SlidingPuzMove implements Move {
     STAY, UP, DOWN, LEFT, RIGHT;
 
     @Override
@@ -21,7 +21,7 @@ public enum NumPuzzleMove implements Move {
         }
     }
 
-    public NumPuzzleMove reverse() {
+    public SlidingPuzMove reverse() {
         switch (this) {
             case UP:
                 return DOWN;
@@ -36,7 +36,7 @@ public enum NumPuzzleMove implements Move {
         }
     }
 
-    public static NumPuzzleMove fromChar(char c) {
+    public static SlidingPuzMove fromChar(char c) {
         switch (c) {
             case '↑':
                 return UP;
