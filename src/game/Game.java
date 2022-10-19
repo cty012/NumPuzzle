@@ -25,6 +25,12 @@ public interface Game {
     String getState();
 
     /**
+     * Outputs the formatted state for better visualization when printed to the console
+     * @return The formatted string
+     */
+    String getFormattedState();
+
+    /**
      * Execute a certain move that changes the game state
      * @param m The type of the move
      * @return Whether the move is successful
@@ -55,20 +61,26 @@ public interface Game {
     int getSteps();
 
     /**
-     * Checks if the current state is the final state
-     * @return A boolean value representing whether the current state is the final state
+     * Checks if the CURRENT state is the final state
+     * @return A boolean value representing whether the CURRENT state is the final state
      */
     boolean isFinalState();
 
     /**
-     * Evaluate how "good" the CURRENT state is. Usually, a state with fewer steps to reach and closer
+     * Checks if the GIVEN state is the final state
+     * @return A boolean value representing whether the GIVEN state is the final state
+     */
+    boolean isFinalState(String state);
+
+    /**
+     * Evaluate how "good" the CURRENT state is. Usually, a state with fewer steps to reach AND closer
      * to the target state will be a better state
      * @return An integer score of the CURRENT state. A lower score represents a better state
      */
     int evaluate();
 
     /**
-     * Evaluate how "good" the GIVEN state is. Usually, a state with fewer steps to reach and closer
+     * Evaluate how "good" the GIVEN state is. Usually, a state with fewer steps to reach AND closer
      * to the target state will be a better state
      * @param state The state to be evaluated
      * @return An integer score of the GIVEN state. A lower score represents a better state

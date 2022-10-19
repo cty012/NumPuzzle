@@ -54,8 +54,11 @@ public class AStarSolution implements Solution {
                     if (verbose >= 1) {
                         System.out.printf("%d/0: %d iterations\n", score, count);
                     }
-                    if (verbose >= 2) {
+                    if (verbose == 2) {
                         System.out.println(game.getState());
+                        System.out.println();
+                    } else if (verbose >= 3) {
+                        System.out.println(game.getFormattedState());
                         System.out.println();
                     }
                 }
