@@ -1,7 +1,5 @@
 package game;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
 public interface Game {
@@ -35,7 +33,7 @@ public interface Game {
      * @param m The type of the move
      * @return Whether the move is successful
      */
-    boolean move(@NotNull Move m);
+    boolean move(Move m);
 
     /**
      * Undo the last move. Note that for some games this will always fail

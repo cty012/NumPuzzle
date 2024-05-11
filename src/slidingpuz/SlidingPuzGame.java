@@ -2,7 +2,6 @@ package slidingpuz;
 
 import game.Game;
 import game.Move;
-import org.jetbrains.annotations.NotNull;
 import utils.Pair;
 
 import java.util.ArrayList;
@@ -82,7 +81,7 @@ public class SlidingPuzGame implements Game {
     }
 
     @Override
-    public boolean move(@NotNull Move direction) {
+    public boolean move(Move direction) {
         Pair emptyCell = board.getEmptyCell();
         Pair target = emptyCell.clone();
         switch ((SlidingPuzMove) direction) {
